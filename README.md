@@ -25,7 +25,7 @@ Objectives
 Data
 ----
 
-Historical data was retrieved from [Yahoo Finance](https://ca.finance.yahoo.com/) using automated Python scripts. Dataset includes:
+Historical data was retrieved from Yahoo Finance (https://ca.finance.yahoo.com/) using automated Python scripts. The dataset includes:
 
 -   Daily price movements
 
@@ -116,7 +116,7 @@ python main.py
 Demo
 ----
 
-For an interactive demonstration and visualization, refer to included scripts and outputs.
+For an interactive demonstration and visualization, refer to the included scripts and outputs.
 
 Team Members
 ------------
@@ -133,7 +133,9 @@ References
 -   Wealthsimple ETF explanation: [What is an ETF?](https://www.wealthsimple.com/en-ca/learn/what-is-etf)
 
 -   S&P 500 Overview: [TradingView](https://www.tradingview.com/markets/indices/quotes-snp/)
+  
+-   Used ChatGPT AI to help with fine-tuning and finding mistakes in the code. To make improvements as well.
 
 * * * * *
 
-For questions or contributions, please contact the team members.
+If you have any questions or contributions, don't hesitate to get in touch with the team members.
