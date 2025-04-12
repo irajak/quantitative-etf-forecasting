@@ -14,23 +14,19 @@ from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.preprocessing import MinMaxScaler
 
 import tensorflow as tf
-print(tf.__version__)  # Should print "2.10.0"
-print(tf.reduce_sum(tf.random.normal([1000, 1000])))  # Basic operation to test runtime
+print(tf.__version__) 
+print(tf.reduce_sum(tf.random.normal([1000, 1000])))
 
 def train_regression_models(X_train, y_train, X_test, y_test):
     """
-    Train three regression models:
-      - Linear Regression (baseline)
-      - Random Forest Regressor (non-linear)
-      - XGBoost Regressor (non-linear)
-    
-    Args:
         X_train (pd.DataFrame or np.ndarray): Training features
+
         y_train (pd.Series or np.ndarray): Training target
+
         X_test (pd.DataFrame or np.ndarray): Test features
+
         y_test (pd.Series or np.ndarray): Test target
-    
-    Returns:
+
         dict: Dictionary containing trained models and performance metrics (MSE, R2)
     """
     results = {}
@@ -68,19 +64,14 @@ def train_regression_models(X_train, y_train, X_test, y_test):
 
 def train_classification_models(X_train, y_train, X_test, y_test):
     """
-    Train two classification models:
-      - Logistic Regression (baseline)
-      - Gradient Boosting Classifier (non-linear)
-      
-    The target is binary: 1 if the next day's percentage change is positive, 0 otherwise.
-    
-    Args:
         X_train (pd.DataFrame): Training features
+
         y_train (pd.Series): Training target (continuous prices)
+
         X_test (pd.DataFrame): Test features
+
         y_test (pd.Series): Test target (continuous prices)
     
-    Returns:
         dict: Dictionary containing trained models and performance metrics (Accuracy, Confusion Matrix)
     """
     results = {}
@@ -124,13 +115,10 @@ def train_classification_models(X_train, y_train, X_test, y_test):
 
 def train_arima_model(df, order=(1, 1, 1)):
     """
-    Train an ARIMA model on the ETF's closing price and forecast the next 10 days.
-    
-    Args:
         df (pd.DataFrame): DataFrame with 'Date' and 'Close' columns
+
         order (tuple): ARIMA order (p, d, q), default is (1, 1, 1)
     
-    Returns:
         tuple: Fitted ARIMA model and forecast for the next 10 days
     """
     try:
@@ -146,32 +134,33 @@ def train_arima_model(df, order=(1, 1, 1)):
 
 def train_lstm_model(df, feature='Close', sequence_length=10, epochs=50, batch_size=32):
     """
-    Train an LSTM model to forecast the closing price using a sequence of past days.
-    
-    Args:
+
         df (pd.DataFrame): DataFrame with the feature column (default 'Close')
+
         feature (str): Column name to predict, default is 'Close'
+
         sequence_length (int): Number of past days to use as input, default is 10
+
         epochs (int): Number of training epochs, default is 50
+
         batch_size (int): Training batch size, default is 32
     
-    Returns:
         tuple: Trained LSTM model, scaler used, and predictions on the test set
     """
     try:
-        # Prepare data
+        # prepare our data
         data = df[[feature]].values
         scaler = MinMaxScaler()
         scaled_data = scaler.fit_transform(data)
         
-        # Create sequences for LSTM input
+        # create sequences for LSTM input
         X, y = [], []
         for i in range(len(scaled_data) - sequence_length):
             X.append(scaled_data[i:i + sequence_length])
             y.append(scaled_data[i + sequence_length])
         X, y = np.array(X), np.array(y)
         
-        # Ensure 3D shape: (samples, timesteps, features)
+        # ensure 3D shape: (samples, timesteps, features)
         X = X.reshape((X.shape[0], X.shape[1], 1))
         
         # Train/test split (80/20)
@@ -179,17 +168,17 @@ def train_lstm_model(df, feature='Close', sequence_length=10, epochs=50, batch_s
         X_train, X_test = X[:train_size], X[train_size:]
         y_train, y_test = y[:train_size], y[train_size:]
         
-        # Define LSTM model
+        # define LSTM model
         model = Sequential()
         model.add(LSTM(50, activation='relu', input_shape=(sequence_length, 1)))
         model.add(Dense(1))
         model.compile(optimizer='adam', loss='mse')
         
-        # Train with early stopping
+        # train with early stopping
         early_stop = EarlyStopping(monitor='loss', patience=5)
         model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=1, callbacks=[early_stop])
         
-        # Predict and inverse transform
+        # predict and inverse transform
         predictions = model.predict(X_test)
         predictions = scaler.inverse_transform(predictions)
         return model, scaler, predictions
